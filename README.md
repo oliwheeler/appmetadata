@@ -33,8 +33,26 @@ Run this request
 curl -i -X POST http://localhost:8080 --data-binary '@payload.yml'
 ```
 
-Fetch the payload:
+## Get the payload
 
 ```sh
 curl -i http://localhost:8080/Valid%20App%201
+```
+
+## Get all payloads
+
+```sh
+curl -i http://localhost:8080/
+```
+
+## Filter by company
+
+```sh
+curl -i http://localhost:8080/?company=Random%20Inc.
+```
+
+## Update a company
+
+```sh
+curl -i -X PUT http://localhost:8080/Valid%20App%201 --data-binary '@payload.yml'
 ```

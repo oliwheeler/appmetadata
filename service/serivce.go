@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io"
 	"io/ioutil"
-	"strings"
 
 	"github.com/oliwheeler/appmetadata/models"
 	"github.com/oliwheeler/appmetadata/service/store"
@@ -16,9 +15,7 @@ type Service struct {
 }
 
 type Filter struct {
-	MaintainerName  string
-	MaintainerEmail string
-	Company         string
+	Company string
 }
 
 func New() *Service {
@@ -29,13 +26,27 @@ func New() *Service {
 }
 
 func (svc *Service) GetApps(filter Filter) (io.Reader, error) {
-	return strings.NewReader("Do it"), nil
+	var apps []models.Metadata
+	if len(filter.Company) > 0 {
+		if companyApps, err := svc.store.GetByCompany(filter.Company); err != nil {
+			return nil, &CannotNotGetMetadataError{"company", filter.Company, err}
+		} else {
+			apps = companyApps
+		}
+	} else {
+		apps = svc.store.Get()
+	}
+	data, err := yaml.Marshal(apps)
+	if err != nil {
+		return nil, &ServiceError{err}
+	}
+	return bytes.NewReader(data), nil
 }
 
 func (svc *Service) GetAppMetadata(title string) (io.Reader, error) {
 	metadata, err := svc.store.GetMetadata(title)
 	if err != nil {
-		return nil, &CannotNotGetMetadataError{title, err}
+		return nil, &CannotNotGetMetadataError{"title", title, err}
 	}
 
 	data, err := yaml.Marshal(&metadata)

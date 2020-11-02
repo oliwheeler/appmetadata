@@ -3,7 +3,8 @@ package store
 import "fmt"
 
 type DoesNotExistError struct {
-	title string
+	field string
+	value string
 }
 
 type AlreadyExistsError struct {
@@ -11,7 +12,7 @@ type AlreadyExistsError struct {
 }
 
 func (e *DoesNotExistError) Error() string {
-	return fmt.Sprintf("No application with title: '%s' exists", e.title)
+	return fmt.Sprintf("No application with '%s: %s' exists", e.field, e.value)
 }
 
 func (e *AlreadyExistsError) Error() string {

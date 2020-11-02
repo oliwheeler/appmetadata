@@ -8,12 +8,13 @@ import (
 var CannotUpdateTitle = errors.New("Cannot update the title, must create a new application registration")
 
 type CannotNotGetMetadataError struct {
-	Title string
+	Field string
+	Value string
 	Err   error
 }
 
 func (e *CannotNotGetMetadataError) Error() string {
-	return fmt.Sprintf("Could not get metadata with title: '%s'", e.Title)
+	return fmt.Sprintf("Could not get metadata with '%s: '%s'", e.Field, e.Value)
 }
 
 func (e *CannotNotGetMetadataError) Unwrap() error {

@@ -35,11 +35,27 @@ func (api *Api) createApp(w http.ResponseWriter, r *http.Request, ps httprouter.
 		w.Write([]byte(err.Error()))
 		return
 	}
-	w.WriteHeader(http.StatusOK)
 }
 
 func (api *Api) get(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-
+	companies, ok := r.URL.Query()["company"]
+	filter := service.Filter{}
+	if ok && len(companies) > 0 {
+		filter.Company = companies[0]
+	}
+	stream, err := api.svc.GetApps(filter)
+	if err != nil {
+		w.WriteHeader(getHttpResponseCode(err))
+		w.Write([]byte(err.Error()))
+		return
+	}
+	data, err := ioutil.ReadAll(stream)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	w.Write(data)
 }
 
 func (api *Api) getApp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -53,9 +69,9 @@ func (api *Api) getApp(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 	data, err := ioutil.ReadAll(stream)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 	}
 	w.Write(data)
-	w.WriteHeader(http.StatusOK)
 }
 
 func (api *Api) updateApp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -66,7 +82,6 @@ func (api *Api) updateApp(w http.ResponseWriter, r *http.Request, ps httprouter.
 		w.Write([]byte(err.Error()))
 		return
 	}
-	w.WriteHeader(http.StatusOK)
 }
 
 func getHttpResponseCode(err error) int {
