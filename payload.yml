@@ -1,16 +1,3 @@
-# App Metadata
-
-Runs on **:8080**
-
-Start the server:
-
-```sh
-go run main.go
-```
-
-Create a file `payload.yml` in this directory with the contents:
-
-```yml
 title: Valid App 1
 version: 0.0.1
 maintainers:
@@ -25,16 +12,3 @@ license: Apache-2.0
 description: |-
   ### Interesting Title
   Some application content, and description
-```
-
-Run this request
-
-```sh
-curl -i -X POST http://localhost:8080 --data-binary '@payload.yml'
-```
-
-Fetch the payload:
-
-```sh
-curl -i http://localhost:8080/Valid%20App%201
-```
